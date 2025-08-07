@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Dose of Wisdom</title>
+    <style>
+        :root {
+            --primary-color: #5e35b1;
+            --secondary-color: #3949ab;
+            --accent-color: #7c4dff;
+            --text-color: #ffffff;
+            --light-color: #ede7f6;
+            --dark-color: #121212;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+            /* Dark mode variables */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --favorite-bg: rgba(255, 255, 255, 0.15);
+        }
+
+        .dark-mode {
+            --bg-gradient: linear-gradient(135deg, #121212 0%, #333 100%);
+            --card-bg: rgba(0, 0, 0, 0.3);
+            --favorite-bg: rgba(0, 0, 0, 0.4);
+            --text-color: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.5s ease;
+        }
+
+        /* Bubbles Background */
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in;
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(100px);
+            }
+
+            100% {
+                bottom: 100vh;
+                transform: translateX(-200px);
+            }
+        }
+
+        /* Scroll Snap Container */
+        .snap-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+        }
+
+        .snap-section {
+            scroll-snap-align: start;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* Header with Animation */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            grid-column: 1 / -1;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: white;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 0.5rem;
+            transform: translateX(-100%);
+            opacity: 0;
+            animation: slideIn 1s forwards 0.3s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.8s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Quote Card with Clip-path */
+        .quote-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            clip-path: polygon(0% 0%,
+                    100% 0%,
+                    100% 80%,
+                    80% 100%,
+                    0% 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .quote-text {
+            font-size: clamp(1.5rem, 3vw, 1.8rem);
+            font-style: italic;
+            color: white;
+            transition: var(--transition);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            line-height: 1.8;
+        }
+
+        .quote-author {
+            text-align: right;
+            font-weight: bold;
+            color: var(--light-color);
+            font-size: 1.2rem;
+        }
+
+        /* Buttons with Ripple Effect */
+        .buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        button:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        .save-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid white;
+        }
+
+        .save-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .save-btn.saved {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .save-btn.saved:hover {
+            background-color: #9575cd;
+        }
+
+        /* Favorites Section */
+        .favorites-toggle {
+            background-color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .favorites-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: var(--shadow);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .favorites-container.show {
+            max-height: 1000px;
+            padding: 1.5rem;
+        }
+
+        .favorites-title {
+            color: white;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .favorite-item {
+            background-color: var(--favorite-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-color);
+            position: relative;
+            transition: var(--transition);
+            cursor: grab;
+        }
+
+        .favorite-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .favorite-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 99, 71, 0.7);
+            transform: rotate(90deg);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Typing Effect */
+        .typing-container {
+            position: relative;
+            min-height: 2em;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: white;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Parallax Effect */
+        .parallax-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .parallax-1 {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(255,255,255,0.05)"><circle cx="25" cy="25" r="3"/><circle cx="75" cy="50" r="2"/><circle cx="15" cy="80" r="4"/><circle cx="90" cy="20" r="3"/></svg>');
+            background-size: 200px 200px;
+            animation: parallax-1 50s linear infinite;
+        }
+
+        @keyframes parallax-1 {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 200px 200px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+
+        /* Voice Control Indicator */
+        .voice-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .voice-indicator.active {
+            display: flex;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        .voice-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff5252;
+            border-radius: 50%;
+            animation: voice-dot 1.5s infinite;
+        }
+
+        @keyframes voice-dot {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.5);
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .quote-container {
+                padding: 1.5rem;
+                clip-path: none;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="parallax-layer parallax-1"></div>
+
+    <button class="dark-mode-toggle" id="darkModeToggle">🌓</button>
+
+    <div class="container">
+        <header>
+            <h1>Daily Dose of Wisdom</h1>
+            <p>Get inspired with timeless quotes</p>
+        </header>
+
+        <main class="quote-container">
+            <div class="typing-container">
+                <p class="quote-text" id="quote-text"></p>
+                <span class="typing-cursor" id="typing-cursor"></span>
+            </div>
+            <p class="quote-author" id="quote-author"></p>
+            <div class="buttons">
+                <button id="new-quote-btn">✨ New Quote</button>
+                <button id="save-quote-btn" class="save-btn">
+                    <span id="save-icon">♡</span> Save Quote
+                </button>
+                <button id="voice-btn">🎤 Voice Control</button>
+            </div>
+        </main>
+
+        <aside>
+            <button id="toggle-favorites" class="favorites-toggle">★ Show Favorites</button>
+            <div class="favorites-container" id="favorites-container">
+                <h3 class="favorites-title">Your Favorite Quotes</h3>
+                <div class="favorites-list" id="favorites-list">
+                    <p class="empty-message">No favorites yet</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="voice-indicator" id="voiceIndicator">
+        <div class="voice-dot"></div>
+        <span>Listening...</span>
+    </div>
+
+    <footer>
+        <p>© 2025 Daily Dose of Wisdom</p>
+        <p>Created with ❤️ by Y S S Dhanush</p>
+
+    </footer>
+
+    <script>
+        // Quote database
+        const quotes = [
+            {
+                text: "The only way to do great work is to love what you do.",
+                author: "Steve Jobs"
+            },
+            {
+                text: "Life is what happens when you're busy making other plans.",
+                author: "John Lennon"
+            },
+            {
+                text: "In the middle of difficulty lies opportunity.",
+                author: "Albert Einstein"
+            },
+            {
+                text: "The future belongs to those who believe in the beauty of their dreams.",
+                author: "Eleanor Roosevelt"
+            },
+            {
+                text: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+                author: "Winston Churchill"
+            },
+            {
+                text: "You miss 100% of the shots you don't take.",
+                author: "Wayne Gretzky"
+            },
+            {
+                text: "The only limit to our realization of tomorrow will be our doubts of today.",
+                author: "Franklin D. Roosevelt"
+            },
+            {
+                text: "Do not watch the clock. Do what it does. Keep going.",
+                author: "Sam Levenson"
+            },
+            {
+                text: "The best way to predict the future is to invent it.",
+                author: "Alan Kay"
+            },
+            {
+                text: "Life is 10% what happens to us and 90% how we react to it.",
+                author: "Charles R. Swindoll"
+            }
+        ];
+
+        // DOM elements
+        const quoteText = document.getElementById('quote-text');
+        const quoteAuthor = document.getElementById('quote-author');
+        const newQuoteBtn = document.getElementById('new-quote-btn');
+        const saveQuoteBtn = document.getElementById('save-quote-btn');
+        const saveIcon = document.getElementById('save-icon');
+        const toggleFavoritesBtn = document.getElementById('toggle-favorites');
+        const favoritesContainer = document.getElementById('favorites-container');
+        const favoritesList = document.getElementById('favorites-list');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const voiceBtn = document.getElementById('voice-btn');
+        const voiceIndicator = document.getElementById('voiceIndicator');
+        const typingCursor = document.getElementById('typing-cursor');
+
+        // State
+        let currentQuote = null;
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let favoritesVisible = false;
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        let recognition;
+        let isTyping = false;
+        let currentTypingIndex = 0;
+        let typingInterval;
+
+        // Initialize
+        updateDarkMode();
+        displayRandomQuote();
+        renderFavorites();
+        setupDragAndDrop();
+        setupBubbles();
+        setupVoiceRecognition();
+
+        // Event listeners
+        newQuoteBtn.addEventListener('click', debounce(displayRandomQuote, 300));
+        saveQuoteBtn.addEventListener('click', toggleSaveQuote);
+        toggleFavoritesBtn.addEventListener('click', toggleFavorites);
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        voiceBtn.addEventListener('click', toggleVoiceRecognition);
+
+        // Intersection Observer for lazy loading
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.quote-container, .favorites-container').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Functions
+        function displayRandomQuote() {
+            if (isTyping) return;
+
+            // Get a random quote that's not the current one
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * quotes.length);
+            } while (quotes[randomIndex] === currentQuote && quotes.length > 1);
+
+            currentQuote = quotes[randomIndex];
+
+            // Typewriter effect
+            typeQuote(currentQuote.text, () => {
+                quoteAuthor.textContent = `— ${currentQuote.author}`;
+            });
+
+            // Update save button state
+            updateSaveButtonState();
+        }
+
+        function typeQuote(text, callback) {
+            isTyping = true;
+            currentTypingIndex = 0;
+            quoteText.textContent = '';
+            typingCursor.style.display = 'inline-block';
+
+            clearInterval(typingInterval);
+            typingInterval = setInterval(() => {
+                if (currentTypingIndex < text.length) {
+                    quoteText.textContent += text.charAt(currentTypingIndex);
+                    currentTypingIndex++;
+                } else {
+                    clearInterval(typingInterval);
+                    typingCursor.style.display = 'none';
+                    isTyping = false;
+                    if (callback) callback();
+                }
+            }, 30);
+        }
+
+        function toggleSaveQuote() {
+            const isSaved = favorites.some(q =>
+                q.text === currentQuote.text && q.author === currentQuote.author
+            );
+
+            if (isSaved) {
+                // Remove from favorites
+                favorites = favorites.filter(q =>
+                    q.text !== currentQuote.text || q.author !== currentQuote.author
+                );
+            } else {
+                // Add to favorites
+                favorites.push(currentQuote);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+
+            // Update UI
+            updateSaveButtonState();
+            renderFavorites();
+        }
+
+        function updateSaveButtonState() {
+            const isSaved = favorites.some(q =>
+                q.text === currentQuote.text && q.author === currentQuote.author
+            );
+
+            if (isSaved) {
+                saveQuoteBtn.classList.add('saved');
+                saveIcon.textContent = '♥';
+            } else {
+                saveQuoteBtn.classList.remove('saved');
+                saveIcon.textContent = '♡';
+            }
+        }
+
+        function toggleFavorites() {
+            favoritesVisible = !favoritesVisible;
+
+            if (favoritesVisible) {
+                favoritesContainer.classList.add('show');
+                toggleFavoritesBtn.textContent = '★ Hide Favorites';
+            } else {
+                favoritesContainer.classList.remove('show');
+                toggleFavoritesBtn.textContent = '★ Show Favorites';
+            }
+        }
+
+        function renderFavorites() {
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = '<p class="empty-message">No favorites yet</p>';
+                return;
+            }
+
+            favoritesList.innerHTML = '';
+
+            favorites.forEach((quote, index) => {
+                const favoriteItem = document.createElement('div');
+                favoriteItem.className = 'favorite-item';
+                favoriteItem.draggable = true;
+                favoriteItem.dataset.index = index;
+                favoriteItem.innerHTML = `
+                    <p class="quote-text">${quote.text}</p>
+                    <p class="quote-author">— ${quote.author}</p>
+                    <button class="remove-btn" data-index="${index}">✕</button>
+                `;
+
+                favoritesList.appendChild(favoriteItem);
+            });
+
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeFavorite(index);
+                });
+            });
+        }
+
+        function removeFavorite(index) {
+            favorites.splice(index, 1);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            renderFavorites();
+
+            // Update save button if current quote was removed
+            if (currentQuote && favorites.every(q =>
+                q.text !== currentQuote.text || q.author !== currentQuote.author
+            )) {
+                updateSaveButtonState();
+            }
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('darkMode', isDarkMode);
+            updateDarkMode();
+        }
+
+        function updateDarkMode() {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.textContent = '🌞';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkModeToggle.textContent = '🌙';
+            }
+        }
+
+        function setupDragAndDrop() {
+            let draggedItem = null;
+
+            favoritesList.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('favorite-item')) {
+                    draggedItem = e.target;
+                    e.target.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', e.target.dataset.index);
+                    e.dataTransfer.effectAllowed = 'move';
+                }
+            });
+
+            favoritesList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+
+                const afterElement = getDragAfterElement(favoritesList, e.clientY);
+                if (afterElement == null) {
+                    favoritesList.appendChild(draggedItem);
+                } else {
+                    favoritesList.insertBefore(draggedItem, afterElement);
+                }
+            });
+
+            favoritesList.addEventListener('dragend', (e) => {
+                if (e.target.classList.contains('favorite-item')) {
+                    e.target.classList.remove('dragging');
+
+                    // Update favorites array order
+                    const newFavorites = [];
+                    document.querySelectorAll('.favorite-item').forEach(item => {
+                        const index = parseInt(item.dataset.index);
+                        newFavorites.push(favorites[index]);
+                    });
+
+                    favorites = newFavorites;
+                    localStorage.setItem('favorites', JSON.stringify(favorites));
+
+                    // Update dataset indexes
+                    document.querySelectorAll('.favorite-item').forEach((item, index) => {
+                        item.dataset.index = index;
+                        if (item.querySelector('.remove-btn')) {
+                            item.querySelector('.remove-btn').dataset.index = index;
+                        }
+                    });
+                }
+            });
+
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.favorite-item:not(.dragging)')];
+
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+        }
+
+        function setupBubbles() {
+            const bubblesContainer = document.querySelector('.bubbles');
+
+            // Create more bubbles dynamically
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+
+                // Random size between 10px and 80px
+                const size = Math.random() * 70 + 10;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+
+                // Random position
+                bubble.style.left = `${Math.random() * 100}%`;
+
+                // Random animation duration and delay
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 10;
+                bubble.style.animationDuration = `${duration}s`;
+                bubble.style.animationDelay = `${delay}s`;
+
+                // Random opacity
+                bubble.style.opacity = Math.random() * 0.3 + 0.1;
+
+                bubblesContainer.appendChild(bubble);
+            }
+        }
+
+        function setupVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = () => {
+                    voiceIndicator.classList.add('active');
+                };
+
+                recognition.onend = () => {
+                    voiceIndicator.classList.remove('active');
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript.toLowerCase();
+
+                    if (transcript.includes('new quote') || transcript.includes('next quote')) {
+                        displayRandomQuote();
+                    } else if (transcript.includes('save quote') || transcript.includes('add to favorites')) {
+                        toggleSaveQuote();
+                    } else if (transcript.includes('show favorites') || transcript.includes('open favorites')) {
+                        if (!favoritesVisible) toggleFavorites();
+                    } else if (transcript.includes('hide favorites') || transcript.includes('close favorites')) {
+                        if (favoritesVisible) toggleFavorites();
+                    } else if (transcript.includes('dark mode') || transcript.includes('dark theme')) {
+                        toggleDarkMode();
+                    } else if (transcript.includes('light mode') || transcript.includes('light theme')) {
+                        if (isDarkMode) toggleDarkMode();
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Voice recognition error', event.error);
+                    voiceIndicator.classList.remove('active');
+                };
+            } else {
+                voiceBtn.style.display = 'none';
+            }
+        }
+
+        function toggleVoiceRecognition() {
+            if (recognition) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error('Voice recognition error:', e);
+                }
+            } else {
+                alert('Voice recognition not supported in your browser');
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function () {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+
+        // Initialize IndexedDB for more complex data (example setup)
+        function initIndexedDB() {
+            const request = indexedDB.open('QuotesDB', 1);
+
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('quotes')) {
+                    db.createObjectStore('quotes', { keyPath: 'id', autoIncrement: true });
+                }
+            };
+
+            request.onsuccess = (event) => {
+                console.log('IndexedDB initialized');
+            };
+
+            request.onerror = (event) => {
+                console.error('IndexedDB error:', event.target.error);
+            };
+        }
+
+        // Initialize IndexedDB (commented out as we're using localStorage in this example)
+        // initIndexedDB();
+    </script>
+</body>
+
+</html>
